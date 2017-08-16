@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Page Title</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/node_modules/video.js/dist/video-js.css" rel="stylesheet">
 </head>
+
 <body>
     <nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -41,20 +44,22 @@
     </nav>
     <div class="jumbotron">
         <div class="container">
-            <h1 class="display-3">Hello, world!</h1>
-            <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron
-                and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>
+            <h1 class="display-3">Hello, video js!</h1>
+            <p>This is video js sample.</p>
         </div>
     </div>
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <h2>Heading</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris
-                    condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod.
-                    Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
+                <video id="example-video" width=600 height=300 class="video-js vjs-default-skin" controls>
+                    <source src="http://v1.ninifile.com/videos/2017/8/7d49d51e-90a3-4b91-984d-698d51620d6f/cfc6b539-872a-4afe-8d6e-aacb1ea5eb52-master.m3u8"
+                        type="application/x-mpegURL">
+                </video>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-4" id="qualities">
+
             </div>
         </div>
         <hr>
@@ -62,6 +67,46 @@
             <p>© Company 2017</p>
         </footer>
     </div>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
+    <script src="/node_modules/video.js/dist/video.js"></script>
+    <script src="/node_modules/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
+    <script src="/node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.js"></script>
+    <script>
+        var player = videojs('example-video', {}, function () {
+            var pl = this;
+            pl.hls.xhr.beforeRequest = function (options) {
+                return options;
+            };
+        });
+
+        var qualityLevels = player.qualityLevels();
+
+        qualityLevels.on('addqualitylevel', function (event) {
+            var qualityLevel = event.qualityLevel;
+            console.log(qualityLevel);
+            var $button = $("<button class='btn btn-info ml-2'>" + qualityLevel.height + "</button>");
+            $button.on("click", function () {
+                var pl = videojs('example-video');
+                debugger;
+                var $this = $(this);
+                var level = $this.html();
+                var levels = videojs('example-video').qualityLevels().levels_;
+                var selectedLevels = levels.filter(function (item) {
+                    return item.height == level;
+                });
+                var otherLevels = levels.filter(function (item) {
+                    return item.height != level;
+                });
+                for (var index = 0; index < selectedLevels.length; index++) {
+                    selectedLevels[index].enabled = true;
+                }
+                for (var index = 0; index < otherLevels.length; index++) {
+                    otherLevels[index].enabled = false;
+                }
+            });
+            $("#qualities").append($button);
+        });
+    </script>
 </body>
+
 </html>

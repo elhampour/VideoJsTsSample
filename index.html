@@ -5,6 +5,7 @@
     <title>Page Title</title>
     <link href="/node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <link href="/node_modules/video.js/dist/video-js.css" rel="stylesheet">
+    <link href="vsg-skin.css" rel="stylesheet">
 </head>
 
 <body>
@@ -52,7 +53,7 @@
         <div class="row">
             <div class="col-md-4">
                 <video id="example-video" width=600 height=300 class="video-js vjs-default-skin" controls>
-                    <source src="http://v1.ninifile.com/videos/2017/8/7d49d51e-90a3-4b91-984d-698d51620d6f/cfc6b539-872a-4afe-8d6e-aacb1ea5eb52-master.m3u8"
+                    <source src="http://v1.ninifile.com/videos/2017/8/99f317f2-fa56-4487-9315-7fac7f992b67/fd1014b9-9778-4832-b361-e9c073b679f2-master.m3u8"
                         type="application/x-mpegURL">
                 </video>
             </div>
@@ -82,12 +83,27 @@
         var qualityLevels = player.qualityLevels();
 
         qualityLevels.on('addqualitylevel', function (event) {
+            var $auto = $("#qualities").find("#auto");
+            if ($auto.length == 0) {
+                var $autoBtn = $("<button id='auto' class='btn btn-info btn-success ml-2'>" + "auto" + "</button>");
+                $autoBtn.on("click", function () {
+                    var pl = videojs('example-video');
+                    pl.tech_.hls.setCurrentTime(0);
+                    var $this = $(this);
+                    var levels = videojs('example-video').qualityLevels().levels_;
+                    for (var index = 0; index < levels.length; index++) {
+                        levels[index].enabled = true;
+                    }
+                    $("#qualities").find("button").removeClass("btn-success");
+                    $this.addClass("btn-success");
+                });
+                $("#qualities").append($autoBtn);
+            }
             var qualityLevel = event.qualityLevel;
-            console.log(qualityLevel);
             var $button = $("<button class='btn btn-info ml-2'>" + qualityLevel.height + "</button>");
             $button.on("click", function () {
                 var pl = videojs('example-video');
-                debugger;
+                pl.tech_.hls.setCurrentTime(0);
                 var $this = $(this);
                 var level = $this.html();
                 var levels = videojs('example-video').qualityLevels().levels_;
@@ -103,6 +119,8 @@
                 for (var index = 0; index < otherLevels.length; index++) {
                     otherLevels[index].enabled = false;
                 }
+                $("#qualities").find("button").removeClass("btn-success");
+                $this.addClass("btn-success");
             });
             $("#qualities").append($button);
         });

@@ -4,8 +4,6 @@
 <head>
     <title>Page Title</title>
     <link href="/node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-    <link href="/node_modules/video.js/dist/video-js.css" rel="stylesheet">
-    <link href="vsg-skin.css" rel="stylesheet">
 </head>
 
 <body>
@@ -50,79 +48,28 @@
         </div>
     </div>
     <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <video id="example-video" width=600 height=300 class="video-js vjs-default-skin" controls>
-                    <source src="http://v1.ninifile.com/videos/2017/8/2aafd36f-b50c-45d9-87b5-8e21d62a5703/67a48c8d-3bc8-47ca-a14e-68bdd1b28702-master.m3u8"
-                        type="application/x-mpegURL">
-                </video>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-md-4" id="qualities">
-
-            </div>
-        </div>
+        <div id="player"></div>
         <hr>
         <footer>
             <p>© Company 2017</p>
         </footer>
     </div>
+
     <script src="/node_modules/jquery/dist/jquery.js"></script>
-    <script src="/node_modules/video.js/dist/video.js"></script>
-    <script src="/node_modules/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
-    <script src="/node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.js"></script>
+    <script src="/node_modules/clappr/dist/clappr.js"></script>
+    <script src="level-selector.js"></script>
     <script>
-        var player = videojs('example-video', {}, function () {
-            var pl = this;
-            pl.hls.xhr.beforeRequest = function (options) {
-                return options;
-            };
-        });
-
-        var qualityLevels = player.qualityLevels();
-
-        qualityLevels.on('addqualitylevel', function (event) {
-            var $auto = $("#qualities").find("#auto");
-            if ($auto.length == 0) {
-                var $autoBtn = $("<button id='auto' class='btn btn-info btn-success ml-2'>" + "auto" + "</button>");
-                $autoBtn.on("click", function () {
-                    var pl = videojs('example-video');
-                    pl.tech_.hls.setCurrentTime(0);
-                    var $this = $(this);
-                    var levels = videojs('example-video').qualityLevels().levels_;
-                    for (var index = 0; index < levels.length; index++) {
-                        levels[index].enabled = true;
-                    }
-                    $("#qualities").find("button").removeClass("btn-success");
-                    $this.addClass("btn-success");
-                });
-                $("#qualities").append($autoBtn);
+        var player = new Clappr.Player({
+            source: "http://v1.ninifile.com/videos/2017/8/9de62b9a-0b70-46a4-937c-7a7489cfc6a9/494f6d4f-7900-4356-8b79-73b6fa02ccc5-master.m3u8",
+            parentId: "#player",
+            playback:{
+                hlsjsConfig:{
+                    maxBufferSize:5,
+                }
+            },
+            plugins: {
+                'core': [LevelSelector]
             }
-            var qualityLevel = event.qualityLevel;
-            var $button = $("<button class='btn btn-info ml-2'>" + qualityLevel.height + "</button>");
-            $button.on("click", function () {
-                var pl = videojs('example-video');
-                pl.tech_.hls.setCurrentTime(0);
-                var $this = $(this);
-                var level = $this.html();
-                var levels = videojs('example-video').qualityLevels().levels_;
-                var selectedLevels = levels.filter(function (item) {
-                    return item.height == level;
-                });
-                var otherLevels = levels.filter(function (item) {
-                    return item.height != level;
-                });
-                for (var index = 0; index < selectedLevels.length; index++) {
-                    selectedLevels[index].enabled = true;
-                }
-                for (var index = 0; index < otherLevels.length; index++) {
-                    otherLevels[index].enabled = false;
-                }
-                $("#qualities").find("button").removeClass("btn-success");
-                $this.addClass("btn-success");
-            });
-            $("#qualities").append($button);
         });
     </script>
 </body>

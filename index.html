@@ -60,11 +60,17 @@
     <script src="level-selector.js"></script>
     <script>
         var player = new Clappr.Player({
-            source: "http://v1.ninifile.com/videos/2017/8/9de62b9a-0b70-46a4-937c-7a7489cfc6a9/494f6d4f-7900-4356-8b79-73b6fa02ccc5-master.m3u8",
+            source: "494f6d4f-7900-4356-8b79-73b6fa02ccc5-master.m3u8",
             parentId: "#player",
-            playback:{
-                hlsjsConfig:{
-                    maxBufferSize:5,
+            playback: {
+                hlsjsConfig: {
+                    maxBufferSize: 5,
+                    xhrSetup: function (xhr, url) {
+                        console.log(url);
+                        //url = url.replace('http://', 'https://');
+                        url = url.replace('http://v1', 'http://v1');
+                        xhr.open('GET', url, true);
+                    }
                 }
             },
             plugins: {

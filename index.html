@@ -58,6 +58,7 @@
     <script src="/node_modules/jquery/dist/jquery.js"></script>
     <script src="/node_modules/clappr/dist/clappr.js"></script>
     <script src="level-selector.js"></script>
+    <script src="clappr.ads.js"></script>
     <script>
         var player = new Clappr.Player({
             source: "494f6d4f-7900-4356-8b79-73b6fa02ccc5-master.m3u8",
@@ -66,17 +67,48 @@
                 hlsjsConfig: {
                     maxBufferSize: 5,
                     xhrSetup: function (xhr, url) {
-                        console.log(url);
                         //url = url.replace('http://', 'https://');
                         url = url.replace('http://v1', 'http://v1');
                         xhr.open('GET', url, true);
                     }
                 }
             },
+            ads: {
+                preRoll: {
+                    src: 'http://s1.ninifile.com/statics/advideo/2017/6/6e565e68-ba0c-4fd0-9bc7-fa55e488a90e.mp4',
+                    skip: true,
+                    timeout: 7,
+                    href: 'http://www.ninisite.com'
+                },
+                midRoll: {
+                    at: [5, 10, 15],
+                    src: ['http://s1.ninifile.com/statics/advideo/2017/6/6e565e68-ba0c-4fd0-9bc7-fa55e488a90e.mp4',
+                        'http://s1.ninifile.com/statics/advideo/2017/6/6e565e68-ba0c-4fd0-9bc7-fa55e488a90e.mp4',
+                        'http://s1.ninifile.com/statics/advideo/2017/6/6e565e68-ba0c-4fd0-9bc7-fa55e488a90e.mp4'],
+                    skip: true,
+                    timeout: 7,
+                    href: 'http://www.ninisite.com'
+                },
+                postRoll: {
+                    src: 'http://s1.ninifile.com/statics/advideo/2017/6/6e565e68-ba0c-4fd0-9bc7-fa55e488a90e.mp4',
+                    href: 'http://www.ninisite.com'
+                },
+                text: {
+                    wait: 'Wait % seconds...',
+                    skip: 'Skip >'
+                }
+            },
             plugins: {
-                'core': [LevelSelector]
+                'core': [LevelSelector, ClapprAds]
             }
         });
+        player.on(Clappr.Events.PLAYER_PLAY, function (a, b, c, d, e) {
+            var existenseOfVideoAd = $("#video-ad").length != 0;
+            if (existenseOfVideoAd) {
+                player.pause();
+            } else {
+            }
+        })
     </script>
 </body>
 
